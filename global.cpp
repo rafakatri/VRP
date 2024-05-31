@@ -109,13 +109,13 @@ void get_best_route(vector<vector<int>>& combinacoes_validas, vector<vector<int>
         }
         ratio = (float) current_value/current_cost;
         if (ratio > best_value_per_cost) {
+            best_value_per_cost = ratio;
             best_cost = current_cost;
             resp = combinacoes_validas[i];
         }
     } 
     return;
 }
-
 
 int main(int argc, char* argv[]) {
     if (argc!= 2) {
@@ -179,8 +179,6 @@ int main(int argc, char* argv[]) {
     std::cout << std::endl;
 
     cout << "Custo: " << best_cost << endl;
-
-
 
 
     file.close();
