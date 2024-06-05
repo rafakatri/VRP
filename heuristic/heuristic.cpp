@@ -6,7 +6,6 @@
 #include <algorithm>
 #include <limits>
 #include <numeric> 
-#include "omp.h"
 using namespace std;
 
 
@@ -62,19 +61,15 @@ void get_combinations(map<int, int>& demandas, vector<vector<int>>& combinacoes)
         locais.push_back(pair.first);
     }
 
-    for (int len = 1; len <= locais.size(); ++len) {
-        vector<int> current;
-        combine(locais, 0, len, current, combinacoes);
-    }
+    vector<int> current;
+    combine(locais, 0, 1, current, combinacoes);
 }
 
 void validate_combinations(map<int, int>& demandas, vector<vector<int>>& arestas, vector<vector<int>>& combinacoes, int max_capacity, vector<vector<int>>& combinacoes_validas) {
-    
-    #pragma omp parallel for
     for (const auto& combinacao : combinacoes) {
         bool is_valid = true;
         int current_capacity = 0;
-        
+
         for (int i = 0; i < combinacao.size() - 1; ++i) {
             if (arestas[combinacao[i]][combinacao[i + 1]] == -1) {
                 is_valid = false;
@@ -89,42 +84,35 @@ void validate_combinations(map<int, int>& demandas, vector<vector<int>>& arestas
         }
         
         if (is_valid) {
-            #pragma omp critical
             combinacoes_validas.push_back(combinacao);
         }
     }
 }
 
 
-void get_best_route(vector<vector<int>>& combinacoes_validas, vector<vector<int>>& arestas, map<int, int>& demandas, vector<int>& resp, int& best_cost) {
-    float best_value_per_cost = 0.0;
+void get_best_route(vector<vector<int>>& combinacoes_validas, vector<vector<int>>& arestas, map<int, int>& demandas,vector<int> &resp, int &best_cost) {
+    float best_value_per_cost = 0;
     int current_cost, current_value, src, dst;
     float ratio;
 
-    #pragma omp parallel for private(current_cost, current_value, src, dst, ratio)
-    for (int i = 0; i < combinacoes_validas.size(); ++i) {
+    for(int i = 0; i < combinacoes_validas.size(); i++) {
         current_cost = 0;
         current_value = 0;
-
-        for (int j = 0; j < combinacoes_validas[i].size() - 1; ++j) {
+        for (int j = 0; j < combinacoes_validas[i].size() - 1; j++) {
             src = combinacoes_validas[i][j];
-            dst = combinacoes_validas[i][j + 1];
+            dst = combinacoes_validas[i][j+1];
 
             current_value += demandas[dst];
             current_cost += arestas[src][dst];
         }
-
-        ratio = static_cast<float>(current_value) / current_cost;
-
-        #pragma omp critical
-        {
-            if (ratio > best_value_per_cost) {
-                best_value_per_cost = ratio;
-                best_cost = current_cost;
-                resp = combinacoes_validas[i];
-            }
+        ratio = (float) current_value/current_cost;
+        if (ratio > best_value_per_cost) {
+            best_value_per_cost = ratio;
+            best_cost = current_cost;
+            resp = combinacoes_validas[i];
         }
-    }
+    } 
+    return;
 }
 
 
@@ -147,7 +135,7 @@ int main(int argc, char* argv[]) {
     get_combinations(demandas, combinacoes);
     validate_combinations(demandas, arestas, combinacoes, 15, combinacoes_validas);
 
-    cout << "Demandas:\n\n";
+    /*cout << "Demandas:\n\n";
     for (auto &val : demandas) {
         std::cout << "(" << val.first << ", " << val.second << ") ";
     }
@@ -176,7 +164,7 @@ int main(int argc, char* argv[]) {
             std::cout << element << " ";
         }
         std::cout << std::endl;
-    }
+    }*/
 
     vector<int> resp;
     int best_cost;

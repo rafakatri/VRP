@@ -61,8 +61,10 @@ void get_combinations(map<int, int>& demandas, vector<vector<int>>& combinacoes)
         locais.push_back(pair.first);
     }
 
-    vector<int> current;
-    combine(locais, 0, 1, current, combinacoes);
+    for (int len = 1; len <= locais.size(); ++len) {
+        vector<int> current;
+        combine(locais, 0, len, current, combinacoes);
+    }
 }
 
 void validate_combinations(map<int, int>& demandas, vector<vector<int>>& arestas, vector<vector<int>>& combinacoes, int max_capacity, vector<vector<int>>& combinacoes_validas) {
@@ -115,7 +117,6 @@ void get_best_route(vector<vector<int>>& combinacoes_validas, vector<vector<int>
     return;
 }
 
-
 int main(int argc, char* argv[]) {
     if (argc!= 2) {
         cerr << "Usage: " << argv[0] << " <filename>\n";
@@ -135,7 +136,7 @@ int main(int argc, char* argv[]) {
     get_combinations(demandas, combinacoes);
     validate_combinations(demandas, arestas, combinacoes, 15, combinacoes_validas);
 
-    cout << "Demandas:\n\n";
+    /*cout << "Demandas:\n\n";
     for (auto &val : demandas) {
         std::cout << "(" << val.first << ", " << val.second << ") ";
     }
@@ -164,7 +165,7 @@ int main(int argc, char* argv[]) {
             std::cout << element << " ";
         }
         std::cout << std::endl;
-    }
+    }*/
 
     vector<int> resp;
     int best_cost;
@@ -178,6 +179,7 @@ int main(int argc, char* argv[]) {
     std::cout << std::endl;
 
     cout << "Custo: " << best_cost << endl;
+
 
     file.close();
 
