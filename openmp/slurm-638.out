@@ -1,0 +1,7 @@
+Output do job 638
+openmp n=8
+Melhor rota:
+
+0 4 0 
+Custo: 90
+Execution time: 35 milliseconds

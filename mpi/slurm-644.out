@@ -1,0 +1,8 @@
+Output do job 644
+mpi n=11
+hwloc/linux: Ignoring PCI device with non-16bit domain.
+Pass --enable-32bits-pci-domain to configure to support such devices
+(warning: it would break the library ABI, don't enable unless really needed).
+Best route: 0 7 0 
+Best cost: 4
+Execution time: 6437 milliseconds
